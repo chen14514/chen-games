@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>akioi</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Microsoft Yahei",sans-serif}
+body{background:#f7f3e9;color:#555;padding:24px;display:flex;flex-direction:column;align-items:center}
+
+.top-wrap{width:720px;display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.title-main{font-size:72px;font-weight:bold;color:#666;line-height:1}
+.title-sub{font-size:24px;color:#666;margin-top:8px}
+.score-group{display:flex;gap:10px}
+.score-box{background:#b8b2a7;color:#fff;padding:8px 16px;border-radius:4px;text-align:center}
+.score-box .num{font-size:28px;font-weight:bold}
+.score-box .lab{font-size:18px}
+
+.btn-row{width:720px;display:flex;justify-content:space-between;margin-bottom:20px;padding:0 12px}
+button{padding:12px 28px;font-size:20px;background:#a0988b;color:#fff;border:none;border-radius:4px;cursor:pointer;transition:background 0.2s}
+button:hover{background:#8c8478}
+
+.tool-bar{display:none;justify-content:center;align-items:center;gap:12px;margin-bottom:20px;padding:10px 16px;background:#eee;border-radius:8px}
+.tool-item{display:flex;align-items:center;gap:8px;font-size:14px}
+.tool-item input[type="range"]{width:120px}
+.tool-item input[type="number"]{width:90px;padding:6px;font-size:14px}
+.tool-btn{padding:6px 14px;font-size:14px;background:#4477dd;color:#fff;border:none;border-radius:4px;cursor:pointer}
+.tool-btn:hover{background:#3366cc}
+
+.main{display:flex;gap:40px}
+/* 修改grid为5*5布局 */
+.grid{width:480px;height:480px;background:#c8c2b7;border-radius:8px;padding:12px;
+  display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(5,1fr);gap:12px;position:relative;}
+.cell-bg{background:#e0dace;border-radius:4px}
+/* 调整cell尺寸计算为5列 */
+.cell{position:absolute;width:calc(20% - 9.6px);height:calc(20% - 9.6px);
+  border-radius:4px;display:flex;align-items:center;justify-content:center;
+  font-size:26px;font-weight:bold;transition:all 0.2s ease;
+  top:0;left:0;opacity:0;}
+.cell.active{opacity:1;}
+.cell.merge{animation:merge 0.3s ease}
+@keyframes merge {0%{transform:scale(1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+.cell.new{animation:appear 0.3s ease}
+@keyframes appear {0%{opacity:0;transform:scale(0.8)}100%{opacity:1;transform:scale(1)}}
+
+.cell.CE{background:#ffd300;color:#fff}
+.cell.Judging{background:#66b3ff;color:#fff}
+.cell.RE{background:#b366ff;color:#fff}
+.cell.TLE{background:#3366cc;color:#fff}
+.cell.MLE{background:#339966;color:#fff}
+.cell.ILE{background:#996633;color:#fff}
+.cell.OLE{background:#445599;color:#fff}
+.cell.UKE{background:#222222;color:#fff}
+.cell.WA{background:#ff4d4d;color:#fff}
+.cell.PC{background:#ff9933;color:#fff}
+.cell.AC{background:#66cc66;color:#fff}
+.cell.PE{background:#ff99cc;color:#fff}
+.cell.DoJ{background:#996633;color:#fff}
+.cell.SJE{background:#cccccc;color:#fff}
+.cell.AU{background:#ffff66;color:#fff}
+.cell.AK{background:#66ccff;color:#fff}
+
+.sidebar{width:240px}
+.sidebar h3{margin-bottom:8px;font-size:20px;display:flex;justify-content:space-between}
+.status-item{display:flex;justify-content:space-between;align-items:center;padding:2px 0;font-size:14px;line-height:1.2}
+.badge{display:inline-block;width:34px;height:24px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;font-weight:bold;margin-right:8px;font-size:13px}
+.badge-ce{background:#ffd300;color:#fff}
+.badge-judge{background:#66b3ff;position:relative;overflow:hidden}
+.badge-judge::after{content:"📩";position:absolute;font-size:15px;color:#fff}
+.badge-judge::before{content:"⬇️";position:absolute;color:red;font-size:12px;top:-2px}
+.badge-re{background:#66b3ff;color:#fff}
+.badge-tle{background:#3366cc;color:#fff}
+.badge-mle{background:#339966;color:#fff}
+.badge-ile{background:#996633;color:#fff}
+.badge-ole{background:#445599;color:#fff}
+.badge-uke{background:#222222;color:#fff}
+.badge-wa{background:#ff4d4d;color:#fff}
+.badge-pc{background:#ff9933;color:#fff}
+.badge-ac{background:#66cc66;color:#fff}
+.badge-pe{background:#ff99cc;color:#fff}
+.badge-doj{background:#996633;color:#fff}
+.badge-sje{background:#cccccc;color:#fff}
+.badge-au{background:#ffff66;color:#fff}
+.badge-ak{background:#66ccff;color:#fff}
+.badge-pragma{background:#111111;color:#fff}
+.badge-o2{background:#aaaaaa;color:#000}
+.badge-o3{background:#888888;color:#000}
+
+.bottom{margin-top:30px;text-align:center;color:#777;font-size:14px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="top-wrap">
+  <div>
+    <div class="title-main">akioi</div>
+    <div class="title-sub">合并评测状态并得到AK!</div>
+  </div>
+  <div class="score-group">
+    <div class="score-box">
+      <div class="lab">分数</div>
+      <div class="num" id="score">0</div>
+    </div>
+    <div class="score-box">
+      <div class="lab">纪录</div>
+      <div class="num" id="best">0</div>
+    </div>
+  </div>
+</div>
+
+<div class="btn-row">
+  <button id="hintBtn">获得提示</button>
+  <button id="toolToggle">工具栏</button>
+  <button id="resetBtn">回炉重造</button>
+  <button id="autoBtn">自动模式</button>
+</div>
+
+<div class="tool-bar" id="toolBar">
+  <div class="tool-item">
+    <span>自动速度</span>
+    <input type="range" id="speedSlider" min="100" max="2000" value="500">
+    <span id="speedText">500ms</span>
+  </div>
+  <button class="tool-btn" id="btnAK">一键AK</button>
+  <div class="tool-item">
+    <span>最高分</span>
+    <input type="number" id="bestInput" value="0">
+    <button class="tool-btn" id="setBest">设置</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="grid" id="grid">
+    <!-- 生成5*5的背景格子 -->
+    <div class="cell-bg"></div><div class="cell-bg"></div><div class="cell-bg"></div><div class="cell-bg"></div><div class="cell-bg"></div>
+    <div class="cell-bg"></div><div class="cell-bg"></div><div class="cell-bg"></div><div class="cell-bg"></div><div class="cell-bg"></div>
+    <div class="cell-bg"></div><div class="cell-bg"></div><div class="cell-bg"></div><div class="cell-bg"></div><div class="cell-bg"></div>
+    <div class="cell-bg"></div><div class="cell-bg"></div><div class="cell-bg"></div><div class="cell-bg"></div><div class="cell-bg"></div>
+    <div class="cell-bg"></div><div class="cell-bg"></div><div class="cell-bg"></div><div class="cell-bg"></div><div class="cell-bg"></div>
+  </div>
+  <div class="sidebar">
+    <h3><span>评测状态</span><span>数值</span></h3>
+    <div class="status-item"><span><span class="badge badge-ce">CE</span> Compile Error</span><span>2</span></div>
+    <div class="status-item"><span><span class="badge badge-judge"></span> Judging</span><span>4</span></div>
+    <div class="status-item"><span><span class="badge badge-re">RE</span> Runtime Error</span><span>8</span></div>
+    <div class="status-item"><span><span class="badge badge-tle">TLE</span> Time Limit Exceeded</span><span>16</span></div>
+    <div class="status-item"><span><span class="badge badge-mle">MLE</span> Memory Limit Exceeded</span><span>32</span></div>
+    <div class="status-item"><span><span class="badge badge-ile">ILE</span> Idleness Limit Exceeded</span><span>64</span></div>
+    <div class="status-item"><span><span class="badge badge-ole">OLE</span> Output Limit Exceeded</span><span>128</span></div>
+    <div class="status-item"><span><span class="badge badge-uke">UKE</span> UnKnown Error</span><span>256</span></div>
+    <div class="status-item"><span><span class="badge badge-wa">WA</span> Wrong Answer</span><span>512</span></div>
+    <div class="status-item"><span><span class="badge badge-pc">PC</span> Partially Correct</span><span>1024</span></div>
+    <div class="status-item"><span><span class="badge badge-ac">AC</span> ACcepted</span><span>2048</span></div>
+    <div class="status-item"><span><span class="badge badge-pe">PE</span> Presentation Error</span><span>4096</span></div>
+    <div class="status-item"><span><span class="badge badge-doj">DoJ</span> Denial of Judging</span><span>8192</span></div>
+    <div class="status-item"><span><span class="badge badge-sje">SJE</span> Special Judge Error</span><span>16384</span></div>
+    <div class="status-item"><span><span class="badge badge-au">AU</span> AU</span><span>32768</span></div>
+    <div class="status-item"><span><span class="badge badge-ak">AK</span> AK</span><span>65536</span></div>
+    <div class="status-item"><span><span class="badge badge-pragma">#</span> #pragma ...</span><span>×1</span></div>
+    <div class="status-item"><span><span class="badge badge-o2">O2</span> -O2</span><span>×2</span></div>
+    <div class="status-item"><span><span class="badge badge-o3">O3</span> -O3</span><span>×4</span></div>
+  </div>
+</div>
+
+<div class="bottom">
+玩法：使用方向键移动方块。相同状态相撞合并成两倍<br>
+对比链接 https://vgakbzc.github.io/2021/07/14/hello-world/<br>
+制作：chen_14514 & 豆包
+</div>
+
+<script>
+const map = [
+  {v:2,text:'CE',cls:'CE'},{v:4,text:'Judging',cls:'Judging'},
+  {v:8,text:'RE',cls:'RE'},{v:16,text:'TLE',cls:'TLE'},
+  {v:32,text:'MLE',cls:'MLE'},{v:64,text:'ILE',cls:'ILE'},
+  {v:128,text:'OLE',cls:'OLE'},{v:256,text:'UKE',cls:'UKE'},
+  {v:512,text:'WA',cls:'WA'},{v:1024,text:'PC',cls:'PC'},
+  {v:2048,text:'AC',cls:'AC'},{v:4096,text:'PE',cls:'PE'},
+  {v:8192,text:'DoJ',cls:'DoJ'},{v:16384,text:'SJE',cls:'SJE'},
+  {v:32768,text:'AU',cls:'AU'},{v:65536,text:'AK',cls:'AK'},
+]
+// 修改网格大小为5*5=25个格子
+let grid = Array(25).fill(0)
+let score=0,best=0
+let newCellPos=-1,mergePos=-1
+let autoOn = false;
+let autoInterval = null;
+let autoSpeed = 500;
+
+const speedSlider = document.getElementById('speedSlider');
+const speedText = document.getElementById('speedText');
+const btnAK = document.getElementById('btnAK');
+const bestInput = document.getElementById('bestInput');
+const setBestBtn = document.getElementById('setBest');
+const toolToggle = document.getElementById('toolToggle');
+const toolBar = document.getElementById('toolBar');
+const autoBtn = document.getElementById('autoBtn');
+
+toolToggle.onclick = ()=>{
+  toolBar.style.display = toolBar.style.display === 'none' ? 'flex' : 'none';
+}
+
+speedSlider.oninput = ()=>{
+  autoSpeed = Number(speedSlider.value);
+  speedText.textContent = autoSpeed+'ms';
+  if(autoOn){clearInterval(autoInterval);autoInterval=setInterval(bestStep,autoSpeed)}
+}
+
+btnAK.onclick = ()=>{
+  grid.fill(0);grid[24]=65536;score=65536;if(score>best)best=score;render();
+}
+
+setBestBtn.onclick = ()=>{best=Number(bestInput.value)||0;document.getElementById('best').textContent=best}
+
+const $=s=>document.querySelector(s)
+const gridEl=$('#grid')
+// 重新计算5*5格子的尺寸和间距
+const cellSize=(480-12*6)/5, gap=12
+
+// 生成25个格子元素
+const cells=Array.from({length:25},(_,i)=>{
+  const d=document.createElement('div')
+  d.className='cell'
+  const row=Math.floor(i/5), col=i%5
+  d.style.left=`${col*(cellSize+gap)+gap}px`
+  d.style.top=`${row*(cellSize+gap)+gap}px`
+  gridEl.append(d)
+  return d
+})
+
+function render(){
+  cells.forEach((c,i)=>{
+    const v=grid[i]
+    c.className='cell';c.classList.remove('active','new','merge')
+    if(!v){c.textContent='';c.style.opacity=0;return}
+    const o=map.find(x=>x.v===v)
+    c.classList.add(o.cls,'active');c.textContent=o.text;c.style.opacity=1
+    if(i===newCellPos)c.classList.add('new')
+    if(i===mergePos)c.classList.add('merge')
+  })
+  setTimeout(()=>{newCellPos=-1;mergePos=-1},300)
+  $('#score').textContent=score
+  if(score>best){best=score;$('#best').textContent=best;bestInput.value=best}
+}
+
+function rand2(){
+  const empty=grid.map((v,i)=>v?null:i).filter(x=>x!==null)
+  if(!empty.length)return false
+  const pos=empty[Math.floor(Math.random()*empty.length)]
+  grid[pos] = Math.random()<0.5 ? 2 : 4;
+  newCellPos=pos;render();return true
+}
+
+function start(){
+  if(autoOn) toggleAuto();
+  grid=Array(25).fill(0);score=0;
+  newCellPos=-1;mergePos=-1;
+  rand2();rand2();render()
+}
+
+// 保持slide函数不变，适配任意长度的数组
+function slide(arr){
+  let res = arr.filter(x => x !== 0);
+  for (let i = 0; i < res.length - 1; i++) {
+    if (res[i] === res[i + 1]) {
+      res[i] *= 2;
+      score += res[i];
+      res.splice(i + 1, 1);
+    }
+  }
+  while(res.length < 5) res.push(0); // 修改为补0到5个元素
+  return {arr:res,merged:-1}
+}
+
+// 修改moveOne函数适配5*5网格
+function moveOne(dir){
+  let copy=[...grid],hasChange=false;
+  if(dir==='left'){
+    for(let r=0;r<5;r++){ // 5行
+      let old=copy.slice(r*5,r*5+5); // 每行5个元素
+      let {arr}=slide(old);
+      if(JSON.stringify(old)!==JSON.stringify(arr))hasChange=true;
+      copy.splice(r*5,5,...arr)
+    }
+  }
+  if(dir==='right'){
+    for(let r=0;r<5;r++){
+      let old=copy.slice(r*5,r*5+5);
+      let rev=[...old].reverse();
+      let {arr}=slide(rev);
+      let nxt=[...arr].reverse();
+      if(JSON.stringify(old)!==JSON.stringify(nxt))hasChange=true;
+      copy.splice(r*5,5,...nxt)
+    }
+  }
+  if(dir==='up'){
+    for(let c=0;c<5;c++){ // 5列
+      let old=[copy[c],copy[c+5],copy[c+10],copy[c+15],copy[c+20]]; // 每列5个元素
+      let {arr}=slide(old);
+      if(JSON.stringify(old)!==JSON.stringify(arr))hasChange=true;
+      copy[c]=arr[0];copy[c+5]=arr[1];copy[c+10]=arr[2];copy[c+15]=arr[3];copy[c+20]=arr[4];
+    }
+  }
+  if(dir==='down'){
+    for(let c=0;c<5;c++){
+      let old=[copy[c],copy[c+5],copy[c+10],copy[c+15],copy[c+20]];
+      let rev=[...old].reverse();
+      let {arr}=slide(rev);
+      let nxt=[...arr].reverse();
+      if(JSON.stringify(old)!==JSON.stringify(nxt))hasChange=true;
+      copy[c]=nxt[0];copy[c+5]=nxt[1];copy[c+10]=nxt[2];copy[c+15]=nxt[3];copy[c+20]=nxt[4];
+    }
+  }
+  if(hasChange){grid=copy;rand2();render();return true}
+  return false;
+}
+
+function bestStep(){
+  const dirs = ['down','right','left','up'];
+  for(let d of dirs) if(moveOne(d)) return;
+}
+
+$('#hintBtn').onclick=()=>bestStep();
+$('#resetBtn').onclick=start;
+
+function toggleAuto(){
+  autoOn=!autoOn;
+  autoBtn.innerText=autoOn?'手动模式':'自动模式';
+  if(autoOn)autoInterval=setInterval(bestStep,autoSpeed);
+  else clearInterval(autoInterval);
+}
+autoBtn.onclick=toggleAuto;
+
+document.addEventListener('keydown',e=>{
+  if(autoOn)return;
+  if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))e.preventDefault();
+  if(e.key==='ArrowLeft')moveOne('left')
+  if(e.key==='ArrowRight')moveOne('right')
+  if(e.key==='ArrowUp')moveOne('up')
+  if(e.key==='ArrowDown')moveOne('down')
+})
+
+start()
+</script>
+</body>
+</html>
