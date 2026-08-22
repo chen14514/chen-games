@@ -4,6 +4,11 @@
 
 ---
 
-一堆小游戏
+AKIOI系列
 
-感谢豆包
+- [AKIOI 4*4](https://chen14514.github.io/chen-games/akioi.html)
+- [AKIOI 5*5](https://chen14514.github.io/chen-games/akioi5-5.html)
+
+抽奖类
+
+- [chen-RNGdle（源代码，自行编译）](https://chen14514.github.io/chen-games/chen-RNGdle.cpp)
