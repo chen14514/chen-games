@@ -4,7 +4,8 @@
 
 ---
 
-以下内容中，“√”内容可直接网页游玩，其余需编译后游玩。
+以下内容中，“√”内容可直接网页游玩，其余需编译后游玩。  
+The following items marked with "√" can be played directly in the browser; others require compilation.
 
 ---
 
