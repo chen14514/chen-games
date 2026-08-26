@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-//åŸä»·11ï¿¥ç°0ï¿¥ ï¼ˆåŸæ¸¸æˆã€Š6-7ã€‹https://store.steampowered.com/app/1436640/67/ï¼‰ 
+//Ô­¼Û11£¤ÏÖ0£¤ £¨Ô­ÓÎÏ·¡¶6-7¡·https://store.steampowered.com/app/1436640/67/£© 
 
 int main()
 {
@@ -22,23 +22,23 @@ int main()
 			}
 		}
 	}
-	cout<<"çŒœ67ï¼ˆ6ä¸ª6ï¼Œ7ä¸ª7ï¼Œä¸ä¼šæœ‰ä¸‰ä¸ªè¿ç»­æ•°å­—é‡å¤ï¼‰"<<endl; 
+	cout<<"²Â67£¨6¸ö6£¬7¸ö7£¬²»»áÓĞÈı¸öÁ¬ĞøÊı×ÖÖØ¸´£©"<<endl; 
 	string s;
 	int cnt=1;
 	while (true){
 		if (cnt==14){
-			cout<<"æ­å–œï¼çŒœå¯¹äº†";
+			cout<<"¹§Ï²£¡²Â¶ÔÁË";
 			return 0;
 		}
-		cout<<"å½“å‰è½®æ•°ï¼š"<<cnt<<endl;
+		cout<<"µ±Ç°ÂÖÊı£º"<<cnt<<endl;
 		cin>>s; 
 		if (s=="6"){
 			if (num[cnt]==6){
-				cout<<"å¯¹"<<endl;
+				cout<<"¶Ô"<<endl;
 				cnt++;
 			}
 			else{
-				cout<<"é”™è¯¯ï¼ç­”æ¡ˆï¼š";
+				cout<<"´íÎó£¡´ğ°¸£º";
 				for (int i=1;i<=13;i++){
 					cout<<num[i]<<" ";
 				}
@@ -47,11 +47,11 @@ int main()
 		}
 		else if (s=="7"){
 			if (num[cnt]==7){
-				cout<<"å¯¹"<<endl;
+				cout<<"¶Ô"<<endl;
 				cnt++;
 			}
 			else{
-				cout<<"é”™è¯¯ï¼ç­”æ¡ˆï¼š";
+				cout<<"´íÎó£¡´ğ°¸£º";
 				for (int i=1;i<=13;i++){
 					cout<<num[i]<<" ";
 				}
@@ -59,7 +59,7 @@ int main()
 			}
 		}
 		else{
-			cout<<"æ— æ•ˆè¾“å…¥ï¼"<<endl; 
+			cout<<"ÎŞĞ§ÊäÈë£¡"<<endl; 
 		}
 	}
 	return 0;
