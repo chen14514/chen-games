@@ -17,3 +17,7 @@ AKIOI系列
 抽奖类
 
 - [chen-RNGdle](https://chen14514.github.io/chen-games/chen-RNGdle.cpp)
+
+其他
+
+- [guess6or7](https://chen14514.github.io/chen-games/guess6or7.cpp)
