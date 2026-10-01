@@ -14,10 +14,8 @@ AKIOI系列
 - [√ AKIOI 4*4](https://chen14514.github.io/chen-games/akioi.html)
 - [√ AKIOI 5*5](https://chen14514.github.io/chen-games/akioi5-5.html)
 
-抽奖类
+难以分类
 
 - [chen-RNGdle](https://chen14514.github.io/chen-games/chen-RNGdle.cpp)
-
-其他
-
 - [guess6or7](https://chen14514.github.io/chen-games/guess6or7.cpp)
+- [webbuilder](https://chen14514.github.io/chen-games/webbuilder.cpp)
