@@ -1,0 +1,362 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>chen RNGdle</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1e1e2e;
+    color: #cdd6f4;
+    font-family: 'Consolas', 'Courier New', monospace;
+    padding: 20px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  h1 { color: #89b4fa; margin-bottom: 10px; }
+  .info { color: #a6adc8; margin-bottom: 15px; }
+  .info span { color: #f9e2af; }
+  #output {
+    background: #181825;
+    border: 1px solid #313244;
+    border-radius: 8px;
+    padding: 15px;
+    min-height: 300px;
+    margin-bottom: 15px;
+    white-space: pre-wrap;
+    line-height: 1.6;
+  }
+  .ach { color: #a6e3a1; }
+  .ep { color: #f9e2af; }
+  .gold { color: #fab387; }
+  .rare { color: #cba6f7; }
+  button {
+    background: #89b4fa;
+    color: #1e1e2e;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    font-family: inherit;
+    margin: 5px 5px 5px 0;
+  }
+  button:hover { background: #b4befe; }
+  button:disabled { background: #45475a; color: #6c7086; cursor: not-allowed; }
+  input {
+    background: #313244;
+    color: #cdd6f4;
+    border: 1px solid #45475a;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 14px;
+    width: 200px;
+    margin-right: 8px;
+  }
+  .menu { color: #89dceb; }
+</style>
+</head>
+<body>
+<h1>============ chen RNGdle ============</h1>
+<div class="info">
+  用户名：<span id="name">未登录</span>　金币数：<span id="money">0</span>
+</div>
+<div id="output"></div>
+
+<div id="loginArea">
+  <input id="inpName" placeholder="用户名">
+  <input id="inpPass" placeholder="密码" type="password">
+  <button onclick="login()">登录/注册</button>
+  <button onclick="tempLogin()">临时登录</button>
+</div>
+
+<div id="gameArea" style="display:none;">
+  <button onclick="draw()">抽数字（1000金币）</button>
+  <button onclick="showProfile()">个人主页</button>
+  <button onclick="saveGame()">保存</button>
+  <button onclick="logout()">退出登录</button>
+</div>
+
+<script>
+// ========== 全局变量 ==========
+let user_name = "";
+let user_password = "";
+let user_coin = 0;
+let user_xp = 0;
+let user_cnt = 0;
+let user_maxep = -1;
+let user_bestnum = -1;
+
+// ========== 成就 ==========
+const ach_name = [];
+const ach_info = [];
+const ach_got = {};
+
+function initAch() {
+  const list = [
+    ["六位数","6个数字"],["五位数","5个数字"],["四位数","4个数字"],
+    ["三位数","3个数字"],["两位数","2个数字"],["一位数","1个数字"],
+    ["质数","是个质数"],["回文数","是个回文数"],["奇数","是个奇数"],
+    ["偶数","是个偶数"],["坡","数字单调上升/下降"],["山","中间某一点比左右大"],
+    ["谷","中间某一点比左右小"],["67","包含67"],["114514","数字刚好为114514"],
+    ["幸运7","包含7"],["666","包含666"],["平方数","是个平方数"],
+    ["洞","包含0"],["顺子","数字连续"],["凸","中间只有一点比左右大"],
+    ["凹","中间只有一点比左右小"]
+  ];
+  list.forEach((item, i) => {
+    ach_name[i+1] = item[0];
+    ach_info[i+1] = item[1];
+    ach_got[i+1] = 0;
+  });
+}
+
+// ========== 输出 ==========
+const out = document.getElementById("output");
+function print(text) {
+  out.innerHTML += text + "<br>";
+}
+function clearOut() {
+  out.innerHTML = "";
+}
+
+// ========== 随机数 ==========
+function number() {
+  return Math.floor(Math.random() * 1000000);
+}
+
+// ========== 质数判断 ==========
+function isPrime(n) {
+  if (n < 2) return false;
+  for (let i = 2; i * i <= n; i++) {
+    if (n % i === 0) return false;
+  }
+  return true;
+}
+
+// ========== 成就检测 ==========
+function checkAch(num) {
+  let rate = 1.0;
+  let ep = 0;
+  const s = num.toString();
+  const len = s.length;
+
+  if (len === 6) { ach_got[1]++; ep += 100; rate += 0.001; print(`<span class="ach">[ 六位数 ] 6个数字 +100EP</span>`); }
+  if (len === 5) { ach_got[2]++; ep += 1000; rate += 0.005; print(`<span class="ach">[ 五位数 ] 5个数字 +1,000EP</span>`); }
+  if (len === 4) { ach_got[3]++; ep += 5000; rate += 0.01; print(`<span class="ach">[ 四位数 ] 4个数字 +5,000EP</span>`); }
+  if (len === 3) { ach_got[4]++; ep += 10000; rate += 0.05; print(`<span class="ach">[ 三位数 ] 3个数字 +10,000EP</span>`); }
+  if (len === 2) { ach_got[5]++; ep += 50000; rate += 0.1; print(`<span class="ach">[ 两位数 ] 2个数字 +50,000EP</span>`); }
+  if (len === 1) { ach_got[6]++; ep += 100000; rate += 0.5; print(`<span class="ach">[ 一位数 ] 1个数字 +100,000EP</span>`); }
+
+  if (isPrime(num)) { ach_got[7]++; ep += 1500; rate += 0.03; print(`<span class="ach">[ 质数 ] 是个质数 +1,500EP</span>`); }
+
+  const rev = s.split('').reverse().join('');
+  if (s === rev) { ach_got[8]++; ep += 25000; rate += 0.3; print(`<span class="ach">[ 回文数 ] 是个回文数 +25,000EP</span>`); }
+
+  if (num % 2 === 1) { ach_got[9]++; ep += 200; rate += 0.002; print(`<span class="ach">[ 奇数 ] 是个奇数 +200EP</span>`); }
+  if (num % 2 === 0) { ach_got[10]++; ep += 200; rate += 0.002; print(`<span class="ach">[ 偶数 ] 是个偶数 +200EP</span>`); }
+
+  // 坡
+  let up = true, down = true;
+  for (let i = 0; i < len - 1; i++) {
+    if (s[i] < s[i+1]) down = false;
+    if (s[i] > s[i+1]) up = false;
+  }
+  if (up || down) { ach_got[11]++; ep += 7000; rate += 0.05; print(`<span class="ach">[ 坡 ] 数字单调上升/下降 +7,000EP</span>`); }
+
+  // 山/谷/凸/凹
+  if (len >= 3) {
+    let high = 0, low = 0;
+    for (let i = 1; i < len - 1; i++) {
+      if (s[i] > s[i-1] && s[i] > s[i+1]) high++;
+      if (s[i] < s[i-1] && s[i] < s[i+1]) low++;
+    }
+    if (high === 1) { ach_got[21]++; ep += 5000; rate += 0.01; print(`<span class="ach">[ 凸 ] 中间只有一点比左右大 +5,000EP</span>`); }
+    if (low === 1) { ach_got[22]++; ep += 5000; rate += 0.01; print(`<span class="ach">[ 凹 ] 中间只有一点比左右小 +5,000EP</span>`); }
+    if (high > 1) { ach_got[12]++; ep += 2000; rate += 0.007; print(`<span class="ach">[ 山 ] 中间某一点比左右大 +2,000EP</span>`); }
+    if (low > 1) { ach_got[13]++; ep += 2000; rate += 0.007; print(`<span class="ach">[ 谷 ] 中间某一点比左右小 +2,000EP</span>`); }
+  }
+
+  if (s.includes("67")) { ach_got[14]++; ep += 6767; rate += 0.067; print(`<span class="ach">[ 67 ] 包含67 +6,767EP</span>`); }
+  if (num === 114514) { ach_got[15]++; ep += 114514; rate += 0.8; print(`<span class="ach">[ 114514 ] 数字刚好为114514 +114,514EP</span>`); }
+  if (s.includes("7")) { ach_got[16]++; ep += 777; rate += 0.003; print(`<span class="ach">[ 幸运7 ] 包含7 +777EP</span>`); }
+  if (s.includes("666")) { ach_got[17]++; ep += 6666; rate += 0.066; print(`<span class="ach">[ 666 ] 包含666 +6,666EP</span>`); }
+
+  const root = Math.floor(Math.sqrt(num));
+  if (root * root === num) { ach_got[18]++; ep += 7000; rate += 0.05; print(`<span class="ach">[ 平方数 ] 是个平方数 +7,000EP</span>`); }
+
+  if (s.includes("0")) { ach_got[19]++; ep += 500; rate += 0.003; print(`<span class="ach">[ 洞 ] 包含0 +500EP</span>`); }
+
+  // 顺子
+  up = down = true;
+  for (let i = 1; i < len; i++) {
+    if (s[i] - s[i-1] !== 1) up = false;
+    if (s[i-1] - s[i] !== 1) down = false;
+  }
+  if (up || down) { ach_got[20]++; ep += 10000; rate += 0.3; print(`<span class="ach">[ 顺子 ] 数字连续 +10,000EP</span>`); }
+
+  print("");
+  print(`基础总分 EP：${ep}　倍率：${rate.toFixed(3)}`);
+  const finalEp = Math.floor(ep * rate);
+  print(`<span class="ep">实际评分：${finalEp}</span>`);
+  user_xp += finalEp;
+  print(`累计总评分 XP：${user_xp}`);
+
+  const gold = Math.floor(finalEp * 0.3);
+  user_coin += gold;
+  print(`<span class="gold">获得金币：${gold}</span>`);
+
+  if (finalEp > user_maxep) {
+    user_maxep = finalEp;
+    user_bestnum = num;
+    print(`<span class="rare">单次最高EP提升：${finalEp}</span>`);
+  }
+}
+
+// ========== 抽数字 ==========
+function draw() {
+  if (user_coin < 1000) {
+    clearOut();
+    print("金币不足！需要 1000 金币。");
+    return;
+  }
+  clearOut();
+  user_coin -= 1000;
+  user_cnt++;
+  const num = number();
+  print(`当前数字：${num}`);
+  print(`抽数次数：${user_cnt}`);
+  print("");
+  checkAch(num);
+  updateInfo();
+}
+
+// ========== 个人主页 ==========
+function showProfile() {
+  clearOut();
+  let unlocked = 0;
+  for (let i = 1; i <= 22; i++) if (ach_got[i] > 0) unlocked++;
+  print(`用户名：${user_name}`);
+  print(`金币数：${user_coin}　抽取次数：${user_cnt}`);
+  print(`累计总评分 XP：${user_xp}`);
+  print(`单次最高EP：${user_maxep === -1 ? "暂无" : user_maxep}　最佳数字：${user_bestnum === -1 ? "暂无" : user_bestnum}`);
+  print("");
+  print(`成就进度：${unlocked}/22`);
+  for (let i = 1; i <= 22; i++) {
+    if (ach_got[i] === 0) {
+      print(`[ ??? ] ??? x0`);
+    } else {
+      print(`<span class="ach">[ ${ach_name[i]} ] ${ach_info[i]} x${ach_got[i]}</span>`);
+    }
+  }
+}
+
+// ========== 更新信息栏 ==========
+function updateInfo() {
+  document.getElementById("name").textContent = user_name === "" ? "未登录" : user_name;
+  document.getElementById("money").textContent = user_coin;
+}
+
+// ========== 登录 ==========
+function login() {
+  const name = document.getElementById("inpName").value.trim();
+  const pass = document.getElementById("inpPass").value.trim();
+  if (name === "" || pass === "") {
+    alert("请输入用户名和密码！");
+    return;
+  }
+  const saved = localStorage.getItem("rngdle_" + name);
+  if (saved) {
+    const data = JSON.parse(saved);
+    if (data.password !== pass) {
+      alert("密码错误！");
+      return;
+    }
+    user_name = name;
+    user_password = pass;
+    user_coin = data.coin;
+    user_xp = data.xp;
+    user_cnt = data.cnt;
+    user_maxep = data.maxep;
+    user_bestnum = data.bestnum;
+    for (let i = 1; i <= 22; i++) ach_got[i] = data.ach[i] || 0;
+    print("成功加载存档！");
+  } else {
+    user_name = name;
+    user_password = pass;
+    user_coin = 1000;
+    user_xp = 0;
+    user_cnt = 0;
+    user_maxep = -1;
+    user_bestnum = -1;
+    for (let i = 1; i <= 22; i++) ach_got[i] = 0;
+    print("注册成功！初始金币 1000");
+    saveGame();
+  }
+  showGame();
+}
+
+// ========== 临时登录 ==========
+function tempLogin() {
+  user_name = "访客_" + Date.now();
+  user_password = "";
+  user_coin = 1000;
+  user_xp = 0;
+  user_cnt = 0;
+  user_maxep = -1;
+  user_bestnum = -1;
+  for (let i = 1; i <= 22; i++) ach_got[i] = 0;
+  clearOut();
+  print("临时登录成功！数据不会保存。");
+  showGame();
+}
+
+// ========== 保存 ==========
+function saveGame() {
+  if (user_password === "") {
+    alert("游客模式无法保存！");
+    return;
+  }
+  const data = {
+    password: user_password,
+    coin: user_coin,
+    xp: user_xp,
+    cnt: user_cnt,
+    maxep: user_maxep,
+    bestnum: user_bestnum,
+    ach: {}
+  };
+  for (let i = 1; i <= 22; i++) data.ach[i] = ach_got[i];
+  localStorage.setItem("rngdle_" + user_name, JSON.stringify(data));
+  print("已保存到本地！");
+}
+
+// ========== 退出登录 ==========
+function logout() {
+  user_name = "";
+  user_password = "";
+  user_coin = 0;
+  user_xp = 0;
+  user_cnt = 0;
+  user_maxep = -1;
+  user_bestnum = -1;
+  for (let i = 1; i <= 22; i++) ach_got[i] = 0;
+  clearOut();
+  document.getElementById("loginArea").style.display = "block";
+  document.getElementById("gameArea").style.display = "none";
+  updateInfo();
+}
+
+// ========== 显示游戏区 ==========
+function showGame() {
+  document.getElementById("loginArea").style.display = "none";
+  document.getElementById("gameArea").style.display = "block";
+  updateInfo();
+}
+
+// ========== 初始化 ==========
+initAch();
+updateInfo();
+</script>
+</body>
+</html>
