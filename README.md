@@ -13,6 +13,8 @@ Language: [English](#english) | [简体中文](#简体中文)
 
 ## English
 
+version 2026-11-13.
+
 A collection of small HTML and C++ games.
 
 > The English translation is AI-assisted and may contain inaccuracies. The Chinese version shall prevail.
@@ -31,6 +33,8 @@ A collection of small HTML and C++ games.
 
 ## 简体中文
 
+版本 2026-11-13.
+
 一些 HTML 和 C++ 小游戏。  
 
 > 英文翻译由 AI 辅助完成，可能存在不准确之处，以中文版为准。
@@ -45,5 +49,6 @@ A collection of small HTML and C++ games.
 |RNG|chen-RNGdle|v1.1.1|网页可玩版|[玩](https://chen14514.github.io/chen-games/RNG/chen-RNGdle.html)|
 |webbuilder|webbuilder|demo v0.6|测试版|[代码](https://github.com/chen14514/chen-games/blob/main/webbuilder/webbuilder.cpp)|
 |-|guess6or7|v1.0|猜数|[代码](https://github.com/chen14514/chen-games/blob/main/other/guess6or7.cpp)|
+|-|fighting-world|-|即将推出|-|
 
 ---
