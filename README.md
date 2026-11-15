@@ -1,4 +1,4 @@
-# Hello,world! 👋
+# Hello,Github! 👋
 
 Language: [English](#english) | [简体中文](#简体中文)
 
@@ -23,13 +23,18 @@ A collection of small HTML and C++ games.
 
 | Series | Name | Version | Status | Description | Links |
 |:------:|:----:|:-------:|:------:|:-----------:|:-----:|
-| akioi | akioi 4x4 | v1.0 | Unmaintained | Playable in browser, experimental | [play](https://chen14514.github.io/chen-games/akioi/akioi.html) |
-| akioi | akioi 5x5 | v1.0 | Unmaintained | Playable in browser, experimental | [play](https://chen14514.github.io/chen-games/akioi/akioi5-5.html) |
+| akioi | akioi 4x4 | v1.0 | Unmaintained | Playable in browser | [play](https://chen14514.github.io/chen-games/akioi/akioi.html) |
+| akioi | akioi 5x5 | v1.0 | Unmaintained | Playable in browser | [play](https://chen14514.github.io/chen-games/akioi/akioi5-5.html) |
 | RNG | chen-RNGdle | v1.1.1 | Paused | Random number generator | [source](https://github.com/chen14514/chen-games/blob/main/RNG/chen-RNGdle.cpp) |
 | RNG | chen-RNGdle | v1.1.1 | Paused | Playable in browser | [play](https://chen14514.github.io/chen-games/RNG/chen-RNGdle.html) |
-| webbuilder | webbuilder | demo v0.6 | In development | Test build | [source](https://github.com/chen14514/chen-games/blob/main/webbuilder/webbuilder.cpp) |
-| - | guess6or7 | v1.0 | Paused | Guess the number | [source](https://github.com/chen14514/chen-games/blob/main/other/guess6or7.cpp) |
+| webbuilder | webbuilder | demo v0.6 | In development | Demo | [source](https://github.com/chen14514/chen-games/blob/main/webbuilder/webbuilder.cpp) |
+| - | guess6or7 | v1.1 | Paused | Guess the number | [source](https://github.com/chen14514/chen-games/blob/main/other/guess6or7.cpp) |
 | - | fighting-world | - | Coming soon | - | - |
+
+### Feedback
+
+- Bug reports: [Issues](https://github.com/chen14514/chen-games/issues) 
+- Discussions: [Discussions](https://github.com/chen14514/chen-games/discussions)
 
 ---
 
@@ -50,12 +55,12 @@ A collection of small HTML and C++ games.
 |RNG|chen-RNGdle|v1.1.1|暂缓|随机数生成器|[代码](https://github.com/chen14514/chen-games/blob/main/RNG/chen-RNGdle.cpp)|
 |RNG|chen-RNGdle|v1.1.1|暂缓|网页可玩版|[玩](https://chen14514.github.io/chen-games/RNG/chen-RNGdle.html)|
 |webbuilder|webbuilder|demo v0.6|开发中|测试版|[代码](https://github.com/chen14514/chen-games/blob/main/webbuilder/webbuilder.cpp)|
-|-|guess6or7|v1.0|暂缓|猜数|[代码](https://github.com/chen14514/chen-games/blob/main/other/guess6or7.cpp)|
+|-|guess6or7|v1.1|暂缓|猜数|[代码](https://github.com/chen14514/chen-games/blob/main/other/guess6or7.cpp)|
 |-|fighting-world|-|即将推出|-|-|
 
 ### 反馈
 
-- Bug 反馈：[Issues](https://github.com/chen14514/chen-games/issues)
+- Bug 反馈：[Issues](https://github.com/chen14514/chen-games/issues)  
 - 讨论：[Discussions](https://github.com/chen14514/chen-games/discussions)
 
 ---
