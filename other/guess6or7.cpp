@@ -1,11 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-//原价11￥现0￥ （原游戏《6-7》https://store.steampowered.com/app/1436640/67/） 
-
-int main()
-{
-	srand(time(0));
+void sixseven(){
 	bool three=true;
 	int num[14]={0,6,6,6,6,6,6,7,7,7,7,7,7,7};
 	while (three){
@@ -24,17 +20,18 @@ int main()
 	}
 	cout<<"猜67（6个6，7个7，不会有三个连续数字重复）"<<endl; 
 	string s;
-	int cnt=1;
+	int cnt=1,six=6,seven=7;
 	while (true){
 		if (cnt==14){
 			cout<<"恭喜！猜对了";
-			return 0;
+			return;
 		}
 		cout<<"当前轮数："<<cnt<<endl;
 		cin>>s; 
 		if (s=="6"){
 			if (num[cnt]==6){
-				cout<<"对"<<endl;
+				six--;
+				cout<<"对（6-7剩余："<<six<<"-"<<seven<<"）"<<endl;
 				cnt++;
 			}
 			else{
@@ -42,12 +39,13 @@ int main()
 				for (int i=1;i<=13;i++){
 					cout<<num[i]<<" ";
 				}
-				return 0; 
+				return; 
 			}
 		}
 		else if (s=="7"){
 			if (num[cnt]==7){
-				cout<<"对"<<endl;
+				seven--;
+				cout<<"对（6-7剩余："<<six<<"-"<<seven<<"）"<<endl;
 				cnt++;
 			}
 			else{
@@ -55,12 +53,34 @@ int main()
 				for (int i=1;i<=13;i++){
 					cout<<num[i]<<" ";
 				}
-				return 0; 
+				return; 
 			}
 		}
 		else{
 			cout<<"无效输入！"<<endl; 
 		}
+	}
+}
+
+int main()
+{
+	srand(time(0));
+	int play=0;
+	while (true){
+		cout<<"累计游玩："<<play<<endl; 
+		sixseven();
+		play++;
+		cout<<endl<<"继续（Y/N）：";
+		string s;
+		cin>>s;
+		if (s=="Y"||s=="y"){
+			system("cls");
+			continue;
+		}
+		else if (s=="N"||s=="n"){
+			return 0;
+		}
+		system("cls");
 	}
 	return 0;
 }
