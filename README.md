@@ -13,7 +13,7 @@ Language: [English](#english) | [简体中文](#简体中文)
 
 ## English
 
-version 2026-11-13.
+Version 2026-11-24.
 
 A collection of small HTML and C++ games.
 
@@ -27,7 +27,7 @@ A collection of small HTML and C++ games.
 | akioi | akioi 5x5 | v1.0 | Unmaintained | Playable in browser | [play](https://chen14514.github.io/chen-games/akioi/akioi5-5.html) |
 | RNG | chen-RNGdle | v1.1.1 | Paused | Random number generator | [source](https://github.com/chen14514/chen-games/blob/main/RNG/chen-RNGdle.cpp) |
 | RNG | chen-RNGdle | v1.1.1 | Paused | Playable in browser | [play](https://chen14514.github.io/chen-games/RNG/chen-RNGdle.html) |
-| webbuilder | webbuilder | demo v0.6 | In development | Demo | [source](https://github.com/chen14514/chen-games/blob/main/webbuilder/webbuilder.cpp) |
+| webbuilder | webbuilder | v1.0 | In development | Website building simulator | [source](https://github.com/chen14514/chen-games/blob/main/webbuilder/webbuilder.cpp) |
 | - | guess6or7 | v1.1 | Paused | Guess the number | [source](https://github.com/chen14514/chen-games/blob/main/other/guess6or7.cpp) |
 | - | fighting-world | - | Coming soon | - | - |
 
@@ -40,7 +40,7 @@ A collection of small HTML and C++ games.
 
 ## 简体中文
 
-版本 2026-11-13.
+版本 2026-11-24.
 
 一些 HTML 和 C++ 小游戏。  
 
@@ -54,7 +54,7 @@ A collection of small HTML and C++ games.
 |akioi|akioi 5x5|v1.0|停止维护|网页可玩|[玩](https://chen14514.github.io/chen-games/akioi/akioi5-5.html)|
 |RNG|chen-RNGdle|v1.1.1|暂缓|随机数生成器|[代码](https://github.com/chen14514/chen-games/blob/main/RNG/chen-RNGdle.cpp)|
 |RNG|chen-RNGdle|v1.1.1|暂缓|网页可玩版|[玩](https://chen14514.github.io/chen-games/RNG/chen-RNGdle.html)|
-|webbuilder|webbuilder|demo v0.6|开发中|测试版|[代码](https://github.com/chen14514/chen-games/blob/main/webbuilder/webbuilder.cpp)|
+|webbuilder|webbuilder|v1.0|开发中|搭建网页模拟器|[代码](https://github.com/chen14514/chen-games/blob/main/webbuilder/webbuilder.cpp)|
 |-|guess6or7|v1.1|暂缓|猜数|[代码](https://github.com/chen14514/chen-games/blob/main/other/guess6or7.cpp)|
 |-|fighting-world|-|即将推出|-|-|
 
