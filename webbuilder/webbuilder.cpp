@@ -3,14 +3,12 @@
 using namespace std;
 
 /*
-	v0.6 更新日志
-	- 更多域名 
-	- 加入自定义服务器 
-	- 网页优化与技能升级合并 
+	v1.0 更新日志
+	- 添加域名过期时间 
+	- 添加离线收益以及相关技能升级 
 	
-	v0.7 预告
-	- 完善内容 
-	- 提高域名价值 
+	v1.1 预告
+	- 完善内容
 	- 平衡性调整 
 	
 	------ 
@@ -44,6 +42,9 @@ struct player{
 	int lllv=0;//流量等级
 	int srlv=0;//收入等级
 	int lklv=0;//幸运等级 
+	int leave=0;//离线时间 
+	int lvtm=0;//离线时间等级 
+	int lvsr=0;//离线收入等级 
 }; player p;
 
 //成就系统变量暂存 
@@ -69,7 +70,6 @@ void menu(){
 	#ifdef iakioihashkiller_webbuilder_debug_mode
 		cout<<"# 调试模式"<<endl; 
 	#endif
-	cout<<"# 测试版"<<endl; 
 	cout<<endl;
 	cout<<"============ web builder ============"<<endl;
 	cout<<endl;
@@ -92,7 +92,6 @@ void web_yh(){
 		#ifdef iakioihashkiller_webbuilder_debug_mode
 			cout<<"# 调试模式"<<endl; 
 		#endif
-		cout<<"# 测试版"<<endl; 
 		cout<<endl;
 		cout<<"============ 网页优化 ============"<<endl;
 		cout<<endl;
@@ -101,12 +100,14 @@ void web_yh(){
 		cout<<"配置："<<p.webfwq<<endl; 
 		cout<<endl;
 		cout<<"> 1.[ lv."<<p.weblv<<" ] 网站升级（￥"<<50*(p.weblv+1)<<"，等级+1）"<<endl;
-		cout<<"> 2.[ lv."<<p.lklv<<" ] 幸运加成（￥"<<50*(p.lklv+1)<<"，幸运+2%）"<<endl;
+		cout<<"> 2.[ lv."<<p.lklv<<" ] 幸运加成（￥"<<50*(p.lklv+1)<<"，+2%）"<<endl;
 		cout<<"> 3.[ lv."<<p.lllv<<" ] 流量加成（￥"<<20*(p.lllv+1)<<"，+2%）"<<endl;
 		cout<<"> 4.[ lv."<<p.srlv<<" ] 收益加成（￥"<<20*(p.srlv+1)<<"，+2%）"<<endl;
-		cout<<"> 5.返回"<<endl;
+		cout<<"> 5.[ lv."<<p.lvtm<<" ] 离线时间加成（￥"<<50*(p.lvtm+1)<<"，+10min）"<<endl; 
+		cout<<"> 6.[ lv."<<p.lvsr<<" ] 离线收益加成（￥"<<50*(p.lvsr+1)<<"，+1分）"<<endl;
+		cout<<"> 7.返回"<<endl;
 		cout<<endl;
-		cout<<"数字选择（1~5）：";
+		cout<<"数字选择（1~7）：";
 		string op;
 		cin>>op;
 		cout<<endl;
@@ -151,6 +152,26 @@ void web_yh(){
 			}
 		}
 		else if (op=="5"){
+			if (p.money>=5000*(p.lvtm+1)){
+				p.money-=5000*(p.lvtm+1);
+				p.lvtm++;
+				cout<<"升级成功！当前等级："<<p.lvtm<<endl;
+			}
+			else{
+				cout<<"余额不足"<<endl; 
+			}
+		}
+		else if (op=="6"){
+			if (p.money>=5000*(p.lvsr+1)){
+				p.money-=5000*(p.lvsr+1);
+				p.lvsr++;
+				cout<<"升级成功！当前等级："<<p.lvsr<<endl;
+			}
+			else{
+				cout<<"余额不足"<<endl; 
+			}
+		}
+		else if (op=="7"){
 			return;
 		}
 		else{
@@ -169,7 +190,6 @@ void web_fwq(){
 	#ifdef iakioihashkiller_webbuilder_debug_mode
 		cout<<"# 调试模式"<<endl; 
 	#endif
-	cout<<"# 测试版"<<endl; 
 	cout<<endl;
 	cout<<"============ 服务器购买 ============"<<endl;
 	cout<<endl;
@@ -190,7 +210,7 @@ void web_fwq(){
 	cout<<"> 11.定制服务器"<<endl;
 	cout<<"> 12.返回"<<endl;
 	cout<<endl;
-	cout<<"数字选择（1~11）：";
+	cout<<"数字选择（1~12）：";
 	string op;
 	cin>>op;
 	cout<<endl;
@@ -330,7 +350,7 @@ void web_fwq(){
 	}
 	else if (op=="11"){
 		long long h,g;
-		cout<<"输入服务器核，G"<<endl;
+		cout<<"输入服务器核，G（空格隔开）：";
 		cin>>h>>g;
 		if (h<1||h>256||g<1||g>1024){
 		    cout<<"超出范围！核 1~256，G 1~1024"<<endl;
@@ -370,10 +390,11 @@ void web_ym(){
 	#ifdef iakioihashkiller_webbuilder_debug_mode
 		cout<<"# 调试模式"<<endl; 
 	#endif
-	cout<<"# 测试版"<<endl; 
 	cout<<endl;
 	cout<<"============ 域名购买 ============"<<endl;
 	cout<<endl;
+	cout<<"当前域名："<<p.webadd<<endl;
+	cout<<"还有 "<<p.adddel<<" 天过期"<<endl; 
 	cout<<"余额：￥"<<p.money/100<<"."<<p.money/10%10<<p.money%10<<endl;
 	cout<<endl;
 	cout<<"> 1.[ ￥0/月 ] IP地址：111.111.111.111"<<endl;
@@ -519,41 +540,41 @@ void web_ym(){
 void nextday(){
 	if (p.webfwq==""||p.webadd==""){
 		cout<<"暂无域名 / 服务器，请先购买"<<endl;
-		return;
 	}
 	if (p.fwqdel<=0){
 		cout<<"服务器已过期！"<<endl;
 		p.webfwq+=(p.fwqdel==0?"[已过期]":""); 
 		p.fwqdel=-1;
-		return;
 	} 
 	if (p.adddel<=0){
 		cout<<"域名已过期！"<<endl;
 		p.webadd+=(p.adddel==0?"[已过期]":"");
 		p.adddel=-1;
-		return;
 	}
-	if (p.days==0){
-		p.ll=0;
-		p.sr=0;
-	}
-	else{
-		p.ll=((p.weblv*100+p.webh*50+p.webg*200)*(50+high_rand()%100+p.lklv*2)/100)*(1+p.lllv*0.02); 
-		if (p.ll<=p.maxll){
-			p.sr=p.ll*(1+p.srlv*0.02);
-			p.money+=p.sr;
+	if (p.adddel>0&&p.fwqdel>0){
+		if (p.days==0){
+			p.ll=0;
+			p.sr=0;
 		}
 		else{
-			p.sr=(p.maxll*0.5+(p.ll-p.maxll)*0.01)*(1+p.srlv*0.02);
-			p.money+=p.sr;
-			cout<<"流量超限，服务器过载 "<<(p.ll-p.maxll)*100/p.maxll<<"% ！"<<endl;
+			p.ll=((p.weblv*100+p.webh*50+p.webg*200)*(50+high_rand()%100+p.lklv*2)/100)*(1+p.lllv*0.02); 
+			if (p.ll<=p.maxll){
+				p.sr=p.ll*(1+p.srlv*0.02);
+				p.money+=p.sr;
+			}
+			else{
+				p.sr=(p.maxll*0.5+(p.ll-p.maxll)*0.01)*(1+p.srlv*0.02);
+				p.money+=p.sr;
+				cout<<"流量超限，服务器过载 "<<(p.ll-p.maxll)*100/p.maxll<<"% ！"<<endl;
+			}
 		}
+		p.days++;
+		p.fwqdel--;
+		p.adddel--; 
+		p.lastday=time(0);
+		cout<<"进入下一天，已运营 "<<p.days<<" 天（服务器还有 "<<p.fwqdel<<" 天过期，域名还有 "<<p.adddel<<" 天过期）"<<endl;
 	}
-	p.days++;
-	p.fwqdel--;
-	p.adddel--; 
-	p.lastday=time(0);
-	cout<<"进入下一天，已运营 "<<p.days<<" 天（服务器还有 "<<p.fwqdel<<" 天过期，域名还有 "<<p.adddel<<" 天过期）"<<endl;
+	
 }
  
 void user_page(){
@@ -561,7 +582,6 @@ void user_page(){
 	#ifdef iakioihashkiller_webbuilder_debug_mode
 		cout<<"# 调试模式"<<endl; 
 	#endif
-	cout<<"# 测试版"<<endl; 
 	cout<<endl;
 	cout<<"============ 个人主页 ============"<<endl;
 	cout<<endl;
@@ -581,24 +601,17 @@ void save(){
 	#endif
 	ofstream file(filename.c_str());
 	if (file.is_open()){
-		file<<p.name<<endl;
-		file<<p.password<<endl;
-		file<<p.money<<endl;
-		file<<p.webadd<<endl;
-		file<<p.weblv<<endl;
-		file<<p.webfwq<<endl;
-		file<<p.webh<<endl;
-		file<<p.webg<<endl; 
-		file<<p.days<<endl;
-		file<<p.lastday<<endl;
-		file<<p.maxll<<endl;
-		file<<p.ll<<endl;
-		file<<p.sr<<endl;
-		file<<p.fwqdel<<endl;
-		file<<p.adddel<<endl; 
-		file<<p.lllv<<endl;
-		file<<p.srlv<<endl;
-		file<<p.lklv<<endl;
+		file<<p.name<<endl<<p.password<<endl;
+		file<<p.money<<endl<<p.webadd<<endl;
+		file<<p.weblv<<endl<<p.webfwq<<endl;
+		file<<p.webh<<endl<<p.webg<<endl; 
+		file<<p.days<<endl<<p.lastday<<endl;
+		file<<p.maxll<<endl<<p.ll<<endl;
+		file<<p.sr<<endl<<p.fwqdel<<endl;
+		file<<p.adddel<<endl<<p.lllv<<endl;
+		file<<p.srlv<<endl<<p.lklv<<endl;
+		file<<p.leave<<endl<<p.lvtm<<endl;
+		file<<p.lvsr<<endl;
 		file.close();
 		cout<<"成功保存到："<<filename<<endl;
 	}
@@ -616,29 +629,24 @@ void load(string name,string password){
 	ifstream file(filename.c_str());
 	if (file.is_open()){
 		string load_name,load_password;
-		file>>load_name;
-		file>>load_password;
+		file>>load_name>>load_password;
 		if (password==load_password){
 			p.name=load_name;
 			p.password=load_password;
-			file>>p.money;
-			file>>p.webadd;
-			file>>p.weblv;
-			file>>p.webfwq;
-			file>>p.webh;
-			file>>p.webg;
-			file>>p.days;
-			file>>p.lastday;
-			file>>p.maxll;
-			file>>p.ll;
-			file>>p.sr;
-			file>>p.fwqdel;
-			file>>p.adddel;
-			file>>p.lllv;
-			file>>p.srlv;
-			file>>p.lklv; 
+			file>>p.money>>p.webadd>>p.weblv>>p.webfwq;
+			file>>p.webh>>p.webg>>p.days>>p.lastday;
+			file>>p.maxll>>p.ll>>p.sr>>p.fwqdel;
+			file>>p.adddel>>p.lllv>>p.srlv>>p.lklv; 
+			file>>p.leave>>p.lvtm>>p.lvsr; 
 			file.close();
 			cout<<"成功加载："<<filename<<endl;
+			if (p.leave!=0){
+				long long now=min(14400+(long long)p.lvtm*600,(long long)time(0)-(long long)p.leave);
+				p.money+=now*(1+p.lvsr);
+				cout<<"离线时间(s)："<<now<<"  上限(s)："<<14400+p.lvtm*600<<"  离线收入："<<now*(1+p.lvsr)/100.0<<endl;
+				p.leave=time(0);
+				save();
+			} 
 		}
 		else{
 			file.close();
@@ -668,11 +676,10 @@ void web(){
 		#ifdef iakioihashkiller_webbuilder_debug_mode
 			cout<<"# 调试模式"<<endl; 
 		#endif
-		cout<<"# 测试版"<<endl; 
 		cout<<endl;
 		cout<<"============ 网页信息 ============"<<endl;
 		cout<<endl;
-		cout<<"域名："<<p.webadd<<endl; 
+		cout<<"域名："<<p.webadd<<"  过期时间："<<p.adddel<<" 天后"<<endl; 
 		cout<<"服务器："<<p.webfwq<<"   过期时间："<<p.fwqdel<<" 天后"<<endl;
 		cout<<"最大流量："<<p.maxll<<endl;
 		cout<<"等级："<<p.weblv<<endl;
@@ -686,7 +693,7 @@ void web(){
 		cout<<"> 2.服务器购买"<<endl;
 		cout<<"> 3.域名购买"<<endl;
 		cout<<"> 4.下一天（结算）"<<endl; 
-		cout<<"> 5.返回"<<endl;
+		cout<<"> 5.保存并返回"<<endl;
 		cout<<endl;
 		cout<<"数字选择（1~5）：";
 		string op;
@@ -714,6 +721,8 @@ void web(){
 			#endif 
 		}
 		else if (op=="5"){//返回
+			p.leave=time(0);
+			save();
 			return;
 		}
 		else{
@@ -800,6 +809,7 @@ int main()
 			if (tc=="Y"||tc=="y"){
 				if (p.password!=""){
 					cout<<endl<<"已自动保存！"<<endl; 
+					p.leave=time(0); 
 					save();
 				}
 				return 0;
